@@ -2,9 +2,10 @@
 const hamburger = document.querySelector('.hamburger');
 const navMenu = document.querySelector('.nav-menu');
 
-hamburger.addEventListener('click', () => {
+hamburger?.addEventListener('click', () => {
     hamburger.classList.toggle('active');
     navMenu.classList.toggle('active');
+    hamburger.setAttribute('aria-expanded', String(hamburger.classList.contains('active')));
 });
 
 // Close mobile menu when clicking on a link
@@ -44,23 +45,13 @@ window.addEventListener('scroll', () => {
 // Contact form submission
 const contactForm = document.getElementById('contactForm');
 if (contactForm) {
-    contactForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // Get form values
-        const name = this.querySelector('input[type="text"]').value;
-        const email = this.querySelector('input[type="email"]').value;
-        const phone = this.querySelector('input[type="tel"]').value;
-        const message = this.querySelector('textarea').value;
-        
-        // Simple validation
-        if (name && email && message) {
-            // Show success message
-            alert('Thank you for your message! We will get back to you soon.');
-            this.reset();
-        } else {
-            alert('Please fill in all required fields.');
-        }
+    contactForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        if (!this.reportValidity()) return;
+        const values = new FormData(this);
+        const subject = `Website enquiry from ${values.get('name')}`;
+        const body = `Name: ${values.get('name')}\nEmail: ${values.get('email')}\nPhone: ${values.get('phone') || 'Not provided'}\n\n${values.get('message')}`;
+        window.location.href = `mailto:mirriamgitau00@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     });
 }
 
